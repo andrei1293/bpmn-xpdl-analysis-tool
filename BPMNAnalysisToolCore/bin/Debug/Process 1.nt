@@ -1,0 +1,6 @@
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#StartEvent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Triggering> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Task 1> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#Task 1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Triggering> <http://www.w3.org/1999/02/22-rdf-syntax-ns#IntermediateEvent> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#IntermediateEvent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Triggering> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Route> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#Route> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Triggering> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Task 3> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#Route> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Triggering> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Task 4> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#Task 3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Triggering> <http://www.w3.org/1999/02/22-rdf-syntax-ns#EndEvent> .

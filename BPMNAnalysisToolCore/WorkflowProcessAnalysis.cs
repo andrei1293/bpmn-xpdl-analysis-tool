@@ -73,6 +73,37 @@ namespace BPMNAnalysisToolCore
             }
         }
 
+        public void SaveAsRDFGraph()
+        {
+            string baseURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+
+            using (StreamWriter writer = new StreamWriter(Name + ".nt"))
+            {
+                foreach (Transition transition in Transitions)
+                {
+                    Activity from = GetActivityById(transition.From);
+                    Activity to = GetActivityById(transition.To);
+
+                    string subject = subject = "<" + baseURI + from.Name + ">";
+                    
+                    if (from.Name == null || from.Name.Length == 0) 
+                    {
+                        subject = "<" + baseURI + from.Type + ">";
+                    }
+
+                    string property = "<" + baseURI + "Triggering>";
+                    string _object = "<" + baseURI + to.Name + ">";
+
+                    if (to.Name == null || to.Name.Length == 0)
+                    {
+                        _object = "<" + baseURI + to.Type + ">";
+                    }
+
+                    writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
+                }
+            }
+        }
+
         public override string ToString()
         {
             return String.Format("Workflow Process Id = {0} Name = {1}", Id, Name);
