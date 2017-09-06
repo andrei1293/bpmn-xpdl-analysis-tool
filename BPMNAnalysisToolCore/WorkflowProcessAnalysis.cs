@@ -91,7 +91,7 @@ namespace BPMNAnalysisToolCore
                         subject = "<" + baseURI + from.Type + ">";
                     }
 
-                    string property = "<" + baseURI + "Triggering>";
+                    string property = "<" + baseURI + "TriggeringRelationship>";
                     string _object = "<" + baseURI + to.Name.Replace(' ', '_') + ">";
 
                     if (to.Name == null || to.Name.Length == 0)
