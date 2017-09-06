@@ -84,7 +84,7 @@ namespace BPMNAnalysisToolCore
                     Activity from = GetActivityById(transition.From);
                     Activity to = GetActivityById(transition.To);
 
-                    string subject = subject = "<" + baseURI + from.Name + ">";
+                    string subject = subject = "<" + baseURI + from.Name.Replace(' ', '_') + ">";
                     
                     if (from.Name == null || from.Name.Length == 0) 
                     {
@@ -92,7 +92,7 @@ namespace BPMNAnalysisToolCore
                     }
 
                     string property = "<" + baseURI + "Triggering>";
-                    string _object = "<" + baseURI + to.Name + ">";
+                    string _object = "<" + baseURI + to.Name.Replace(' ', '_') + ">";
 
                     if (to.Name == null || to.Name.Length == 0)
                     {
