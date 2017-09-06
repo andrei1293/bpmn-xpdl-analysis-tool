@@ -73,7 +73,7 @@ namespace BPMNAnalysisToolCore
             }
         }
 
-        public void SaveAsRDFGraph()
+        public void SaveAsRDFTriplesSet()
         {
             string baseURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
