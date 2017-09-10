@@ -13,7 +13,7 @@ namespace XpdlToRdfTool
         {
             if (args.Length == 0)
             {
-                throw new Exception("Invalid XPDL document name!");
+                throw new Exception("Invalid arguments!");
             }
 
             string xpdlDocument = args[0];
@@ -29,7 +29,7 @@ namespace XpdlToRdfTool
             {
                 if (workflowProcess.Activities != null)
                 {
-                    workflowProcess.SaveAsRDFTriplesSet();
+                    workflowProcess.SaveAsRDFTriplesSet(xpdlDocument);
                 }
             }
         }

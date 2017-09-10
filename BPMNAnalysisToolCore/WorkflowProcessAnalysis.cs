@@ -73,26 +73,34 @@ namespace BPMNAnalysisToolCore
             }
         }
 
-        public void SaveAsRDFTriplesSet()
+        public void SaveAsRDFTriplesSet(string xpdlDocument)
         {
             string baseURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-            using (StreamWriter writer = new StreamWriter(Name + ".nt"))
+            string fileName = xpdlDocument.Split('.')[0] + "_" + Name.Replace(' ', '_') + ".nt";
+
+            using (StreamWriter writer = new StreamWriter(fileName))
             {
+                string subject = subject = "<" + baseURI + "ProcessName>";
+                string property = "<" + baseURI + "Is>";
+                string _object = "<" + baseURI + Name.Replace(' ', '_') + ">";
+
+                writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
+
                 foreach (Transition transition in Transitions)
                 {
                     Activity from = GetActivityById(transition.From);
                     Activity to = GetActivityById(transition.To);
 
-                    string subject = subject = "<" + baseURI + from.Name.Replace(' ', '_') + ">";
+                    subject = subject = "<" + baseURI + from.Name.Replace(' ', '_') + ">";
                     
                     if (from.Name == null || from.Name.Length == 0) 
                     {
                         subject = "<" + baseURI + from.Type + ">";
                     }
 
-                    string property = "<" + baseURI + "TriggeringRelationship>";
-                    string _object = "<" + baseURI + to.Name.Replace(' ', '_') + ">";
+                    property = "<" + baseURI + "TriggeringRelationship>";
+                    _object = "<" + baseURI + to.Name.Replace(' ', '_') + ">";
 
                     if (to.Name == null || to.Name.Length == 0)
                     {
