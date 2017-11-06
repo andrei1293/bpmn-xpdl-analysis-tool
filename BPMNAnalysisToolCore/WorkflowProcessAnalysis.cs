@@ -75,14 +75,14 @@ namespace BPMNAnalysisToolCore
 
         public void SaveAsRDFTriplesSet(string xpdlDocument)
         {
-            string baseURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+            string baseURI = "http://process-model.org/bpmn/";
 
             string fileName = xpdlDocument.Split('.')[0] + "_" + Name.Replace(' ', '_') + ".nt";
 
             using (StreamWriter writer = new StreamWriter(fileName))
             {
-                string subject = subject = "<" + baseURI + "ProcessName>";
-                string property = "<" + baseURI + "Is>";
+                string subject = subject = "<" + baseURI + "WorkflowProcess>";
+                string property = "<" + baseURI + "Orchestration>";
                 string _object = "<" + baseURI + Name.Replace(' ', '_') + ">";
 
                 writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
@@ -99,7 +99,7 @@ namespace BPMNAnalysisToolCore
                         subject = "<" + baseURI + from.Type + ">";
                     }
 
-                    property = "<" + baseURI + "TriggeringRelationship>";
+                    property = "<" + baseURI + "Transition>";
                     _object = "<" + baseURI + to.Name.Replace(' ', '_') + ">";
 
                     if (to.Name == null || to.Name.Length == 0)
