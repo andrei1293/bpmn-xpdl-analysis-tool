@@ -75,15 +75,16 @@ namespace BPMNAnalysisToolCore
 
         public void SaveAsRDFTriplesSet(string xpdlDocument)
         {
-            string baseURI = "http://process-model.org/bpmn/";
+            string bpmnBaseURI = "http://process-model.org/bpmn/";
+            string domainBaseURI = "http://process-model.org/domain/";
 
             string fileName = xpdlDocument.Split('.')[0] + "_" + Name.Replace(' ', '_') + ".nt";
 
             using (StreamWriter writer = new StreamWriter(fileName))
             {
-                string subject = subject = "<" + baseURI + "WorkflowProcess>";
-                string property = "<" + baseURI + "Orchestration>";
-                string _object = "<" + baseURI + Name.Replace(' ', '_') + ">";
+                string subject = subject = "<" + bpmnBaseURI + "WorkflowProcess>";
+                string property = "<" + bpmnBaseURI + "Orchestration>";
+                string _object = "<" + domainBaseURI + Name.Replace(' ', '_') + ">";
 
                 writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
 
@@ -92,19 +93,19 @@ namespace BPMNAnalysisToolCore
                     Activity from = GetActivityById(transition.From);
                     Activity to = GetActivityById(transition.To);
 
-                    subject = subject = "<" + baseURI + from.Name.Replace(' ', '_') + ">";
+                    subject = subject = "<" + domainBaseURI + from.Name.Replace(' ', '_') + ">";
                     
                     if (from.Name == null || from.Name.Length == 0) 
                     {
-                        subject = "<" + baseURI + from.Type + ">";
+                        subject = "<" + domainBaseURI + from.Type + ">";
                     }
 
-                    property = "<" + baseURI + "Transition>";
-                    _object = "<" + baseURI + to.Name.Replace(' ', '_') + ">";
+                    property = "<" + bpmnBaseURI + "Transition>";
+                    _object = "<" + domainBaseURI + to.Name.Replace(' ', '_') + ">";
 
                     if (to.Name == null || to.Name.Length == 0)
                     {
-                        _object = "<" + baseURI + to.Type + ">";
+                        _object = "<" + domainBaseURI + to.Type + ">";
                     }
 
                     writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
