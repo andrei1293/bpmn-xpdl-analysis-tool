@@ -13,6 +13,15 @@ namespace BPMNAnalysisToolGUI
 {
     public partial class ToolWindow : Form
     {
+        private Dictionary<string, string> localeActivity = new Dictionary<string, string>()
+        {
+            { "StartEvent", "Стартовое событие" },
+            { "Implementation", "Задача/подпроцесс" },
+            { "IntermediateEvent", "Промежуточное событие" },
+            { "Route", "Шлюз" },
+            { "EndEvent", "Конечное событие" }
+        };
+
         public ToolWindow()
         {
             InitializeComponent();
@@ -60,8 +69,8 @@ namespace BPMNAnalysisToolGUI
 
                         if (analysis.Issues.Count == 0)
                         {
-                            MessageBox.Show(String.Format("No issues were found in the process '{0}'",
-                                workflowProcess.Name), "Analysis");
+                            MessageBox.Show(String.Format("Ошибок построения модели процесса '{0}' не обнаружено!",
+                                workflowProcess.Name), "Анализ моделей BPMN");
                         }
                         else
                         {
@@ -71,9 +80,9 @@ namespace BPMNAnalysisToolGUI
                             resultGrid.ReadOnly = true;
                             resultGrid.AllowUserToAddRows = false;
 
-                            resultGrid.Columns.Add("Name", "Element name");
-                            resultGrid.Columns.Add("Type", "Element type");
-                            resultGrid.Columns.Add("Message", "Error message");
+                            resultGrid.Columns.Add("Name", "Имя элемента");
+                            resultGrid.Columns.Add("Type", "Тип элемента");
+                            resultGrid.Columns.Add("Message", "Описание ошибки");
 
                             resultGrid.Columns["Name"].AutoSizeMode =
                                 DataGridViewAutoSizeColumnMode.AllCells;
@@ -98,7 +107,7 @@ namespace BPMNAnalysisToolGUI
                                 resultGrid.Rows.Add(new object[] 
                                 {
                                     issue.Element.Name, 
-                                    issue.Element.Type,
+                                    localeActivity[issue.Element.Type.ToString()],
                                     issue.Message
                                 });
                             }

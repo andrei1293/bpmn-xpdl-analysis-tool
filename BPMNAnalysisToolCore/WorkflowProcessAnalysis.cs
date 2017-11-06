@@ -192,12 +192,12 @@ namespace BPMNAnalysisToolCore
 
         class Messages
         {
-            public const string START_EVENTS = "Process should has at least one start event";
-            public const string END_EVENTS = "Process should has at least one end event";
-            public const string INTERMEDIATE_EVENTS = "Intermediate event should not start or terminate the process";
-            public const string PROCESS_FLOW = "Gateway should be used to define the process flow";
-            public const string TARGET_TASKS = "Task should continue to the end of the process";
-            public const string SOURCE_TASKS = "Task should not be disconnected from the rest of the process";
+            public const string START_EVENTS = "Для процесса '{0}' не определено стартовое событие";
+            public const string END_EVENTS = "Для процесса '{0}' не определено конечное событие";
+            public const string INTERMEDIATE_EVENTS = "Промежуточное событие '{0}' исключено из потока процесса '{1}'";
+            public const string PROCESS_FLOW = "Для разделения потока процесса '{0}' на несколько маршрутов не используется шлюз";
+            public const string TARGET_TASKS = "Задача '{0}' не приводит к завершению процесса '{1}'";
+            public const string SOURCE_TASKS = "Задача '{0}' не связана с остальным процессом '{1}'";
         }
 
         private void CheckStartEvents()
@@ -219,10 +219,10 @@ namespace BPMNAnalysisToolCore
                     Element = new Activity()
                     {
                         Id = "None",
-                        Name = "None",
+                        Name = "Не указано",
                         Type = ActivityType.StartEvent
                     },
-                    Message = Messages.START_EVENTS
+                    Message = String.Format(Messages.START_EVENTS, Process.Name)
                 });
             }
         }
@@ -246,10 +246,10 @@ namespace BPMNAnalysisToolCore
                     Element = new Activity()
                     {
                         Id = "None",
-                        Name = "None",
+                        Name = "Не указано",
                         Type = ActivityType.EndEvent
                     },
-                    Message = Messages.END_EVENTS
+                    Message = String.Format(Messages.END_EVENTS, Process.Name)
                 });
             }
         }
@@ -283,7 +283,8 @@ namespace BPMNAnalysisToolCore
                         Issues.Add(new Issue()
                         {
                             Element = activity,
-                            Message = Messages.INTERMEDIATE_EVENTS
+                            Message = String.Format(Messages.INTERMEDIATE_EVENTS, 
+                                activity.Name, Process.Name)
                         });
                     }
                 }
@@ -312,7 +313,7 @@ namespace BPMNAnalysisToolCore
                         Issues.Add(new Issue()
                         {
                             Element = activity,
-                            Message = Messages.PROCESS_FLOW
+                            Message = String.Format(Messages.PROCESS_FLOW, Process.Name)
                         });
                     }
                 }
@@ -348,7 +349,7 @@ namespace BPMNAnalysisToolCore
                         Issues.Add(new Issue()
                         {
                             Element = activity,
-                            Message = Messages.TARGET_TASKS
+                            Message = String.Format(Messages.TARGET_TASKS, activity.Name, Process.Name)
                         });
                     }
 
@@ -357,7 +358,7 @@ namespace BPMNAnalysisToolCore
                         Issues.Add(new Issue()
                         {
                             Element = activity,
-                            Message = Messages.SOURCE_TASKS
+                            Message = String.Format(Messages.SOURCE_TASKS, activity.Name, Process.Name)
                         });
                     }
                 }
