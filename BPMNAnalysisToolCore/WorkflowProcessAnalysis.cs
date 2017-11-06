@@ -82,11 +82,23 @@ namespace BPMNAnalysisToolCore
 
             using (StreamWriter writer = new StreamWriter(fileName))
             {
-                string subject = subject = "<" + bpmnBaseURI + "WorkflowProcess>";
-                string property = "<" + bpmnBaseURI + "Orchestration>";
-                string _object = "<" + domainBaseURI + Name.Replace(' ', '_') + ">";
+                string subject = null;
+                string property = null;
+                string _object = null;
 
-                writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
+                foreach (Activity activity in Activities)
+                {
+                    subject = "<" + domainBaseURI + Name.Replace(' ', '_') + ">";
+                    property = "<" + bpmnBaseURI + "Orchestration>";
+                    _object = "<" + domainBaseURI + activity.Name.Replace(' ', '_') + ">";
+
+                    if (activity.Name == null || activity.Name.Length == 0)
+                    {
+                        _object = "<" + domainBaseURI + activity.Type + ">";
+                    }
+
+                    writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
+                }
 
                 foreach (Transition transition in Transitions)
                 {
