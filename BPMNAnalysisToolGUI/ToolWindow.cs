@@ -67,57 +67,50 @@ namespace BPMNAnalysisToolGUI
 
                         analysis.CheckProcess();
 
-                        if (analysis.Issues.Count == 0)
+                        DataGridView resultGrid = new DataGridView();
+
+                        resultGrid.Dock = DockStyle.Fill;
+                        resultGrid.ReadOnly = true;
+                        resultGrid.AllowUserToAddRows = false;
+
+                        resultGrid.Columns.Add("Name", "Имя элемента");
+                        resultGrid.Columns.Add("Type", "Тип элемента");
+                        resultGrid.Columns.Add("Message", "Описание ошибки");
+
+                        resultGrid.Columns["Name"].AutoSizeMode =
+                            DataGridViewAutoSizeColumnMode.AllCells;
+                        resultGrid.Columns["Type"].AutoSizeMode =
+                            DataGridViewAutoSizeColumnMode.AllCells;
+                        resultGrid.Columns["Message"].AutoSizeMode =
+                            DataGridViewAutoSizeColumnMode.Fill;
+
+                        Font defaultFont = new Font("Times New Roman", 14F, GraphicsUnit.Pixel);
+
+                        foreach (DataGridViewColumn column in resultGrid.Columns)
                         {
-                            MessageBox.Show(String.Format("Ошибок построения модели процесса '{0}' не обнаружено!",
-                                workflowProcess.Name), "Анализ моделей BPMN");
+                            column.DefaultCellStyle.Font = defaultFont;
+                            column.HeaderCell.Style.Font = defaultFont;
+                            column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
                         }
-                        else
+
+                        resultGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
+                        foreach (Issue issue in analysis.Issues)
                         {
-                            DataGridView resultGrid = new DataGridView();
-
-                            resultGrid.Dock = DockStyle.Fill;
-                            resultGrid.ReadOnly = true;
-                            resultGrid.AllowUserToAddRows = false;
-
-                            resultGrid.Columns.Add("Name", "Имя элемента");
-                            resultGrid.Columns.Add("Type", "Тип элемента");
-                            resultGrid.Columns.Add("Message", "Описание ошибки");
-
-                            resultGrid.Columns["Name"].AutoSizeMode =
-                                DataGridViewAutoSizeColumnMode.AllCells;
-                            resultGrid.Columns["Type"].AutoSizeMode =
-                                DataGridViewAutoSizeColumnMode.AllCells;
-                            resultGrid.Columns["Message"].AutoSizeMode =
-                                DataGridViewAutoSizeColumnMode.Fill;
-
-                            Font defaultFont = new Font("Times New Roman", 14F, GraphicsUnit.Pixel);
-
-                            foreach (DataGridViewColumn column in resultGrid.Columns)
-                            {
-                                column.DefaultCellStyle.Font = defaultFont;
-                                column.HeaderCell.Style.Font = defaultFont;
-                                column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-                            }
-
-                            resultGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-
-                            foreach (Issue issue in analysis.Issues)
-                            {
-                                resultGrid.Rows.Add(new object[] 
+                            resultGrid.Rows.Add(new object[] 
                                 {
                                     issue.Element.Name, 
                                     localeActivity[issue.Element.Type.ToString()],
                                     issue.Message
                                 });
-                            }
-
-                            TabPage processPage = new TabPage(workflowProcess.Name);
-
-                            processPage.Controls.Add(resultGrid);
-
-                            processesTab.TabPages.Add(processPage);
                         }
+
+                        TabPage processPage = new TabPage(workflowProcess.Name + " (CSC = " +
+                                Math.Round(analysis.CSC, 4) + ")");
+
+                        processesTab.TabPages.Add(processPage);
+
+                        processPage.Controls.Add(resultGrid);
                     }
                 }
             }

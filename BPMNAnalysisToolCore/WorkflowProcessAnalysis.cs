@@ -174,6 +174,8 @@ namespace BPMNAnalysisToolCore
 
         public List<Issue> Issues { get; set; }
 
+        public double CSC { get; set; }
+
         public WorkflowProcessAnalysis()
         {
             Issues = new List<Issue>();
@@ -188,6 +190,8 @@ namespace BPMNAnalysisToolCore
             CheckIntermediateEvents();
             CheckProcessFlow();
             CheckTasks();
+
+            CalculateCSC();
         }
 
         class Messages
@@ -198,6 +202,104 @@ namespace BPMNAnalysisToolCore
             public const string PROCESS_FLOW = "Для разделения потока процесса '{0}' на несколько маршрутов не используется шлюз";
             public const string TARGET_TASKS = "Задача '{0}' не приводит к завершению процесса '{1}'";
             public const string SOURCE_TASKS = "Задача '{0}' не связана с остальным процессом '{1}'";
+        }
+
+        private void CalculateCSC()
+        {
+            double startEventsAmount = 0;
+            double endEventsAmount = 0;
+
+            foreach (Activity activity in Process.Activities)
+            {
+                if (activity.Type.Equals(ActivityType.StartEvent))
+                {
+                    startEventsAmount++;
+                }
+
+                if (activity.Type.Equals(ActivityType.EndEvent))
+                {
+                    endEventsAmount++;
+                }
+            }
+
+            ProcessMatrix matrix = Process.Matrix;
+
+            double intermediateEventTargets = 0;
+            double intermediateEventSources = 0;
+            double intermediateEventAmount = 0;
+
+            foreach (Activity activity in Process.Activities)
+            {
+                if (activity.Type.Equals(ActivityType.IntermediateEvent))
+                {
+                    intermediateEventAmount++;
+                }
+            }
+
+            foreach (Activity activity in Process.Activities)
+            {
+                if (activity.Type.Equals(ActivityType.IntermediateEvent))
+                {
+                    double intermediateEventTargetsSum = 0;
+                    double intermediateEventSourcesSum = 0;
+
+                    int index = Process.GetActivityIndexById(activity.Id);
+
+                    for (int i = 0; i < matrix.Size; i++)
+                    {
+                        intermediateEventTargetsSum += matrix.Array[index, i];
+                    }
+
+                    for (int i = 0; i < matrix.Size; i++)
+                    {
+                        intermediateEventSourcesSum += matrix.Array[i, index];
+                    }
+
+                    intermediateEventTargets += 
+                        ((intermediateEventTargetsSum > 0 ? 1 : 0) - 1) / intermediateEventAmount;
+                    intermediateEventSources += 
+                        ((intermediateEventSourcesSum > 0 ? 1 : 0) - 1) / intermediateEventAmount;
+                }
+            }
+
+            double taskTargets = 0;
+            double taskSources = 0;
+            double taskAmount = 0;
+
+            foreach (Activity activity in Process.Activities)
+            {
+                if (activity.Type.Equals(ActivityType.Implementation))
+                {
+                    taskAmount++;
+                }
+            }
+
+            foreach (Activity activity in Process.Activities)
+            {
+                if (activity.Type.Equals(ActivityType.Implementation))
+                {
+                    double taskTargetsSum = 0;
+                    double taskSourcesSum = 0;
+
+                    int index = Process.GetActivityIndexById(activity.Id);
+
+                    for (int i = 0; i < matrix.Size; i++)
+                    {
+                        taskTargetsSum += matrix.Array[index, i];
+                    }
+
+                    for (int i = 0; i < matrix.Size; i++)
+                    {
+                        taskSourcesSum += matrix.Array[i, index];
+                    }
+
+                    taskTargets += Math.Abs(1 - taskTargetsSum);
+                    taskSources += ((taskSourcesSum > 0 ? 1 : 0) - 1) / taskAmount;
+                }
+            }
+
+            CSC = ((startEventsAmount > 0 ? 1 : 0) - 1) + ((endEventsAmount > 0 ? 1 : 0) - 1) +
+                intermediateEventTargets + intermediateEventSources + taskSources - taskTargets;
         }
 
         private void CheckStartEvents()
