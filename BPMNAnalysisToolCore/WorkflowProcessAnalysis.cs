@@ -293,7 +293,7 @@ namespace BPMNAnalysisToolCore
                         taskSourcesSum += matrix.Array[i, index];
                     }
 
-                    taskTargets += Math.Abs(1 - taskTargetsSum);
+                    taskTargets += Math.Abs(1 - taskTargetsSum) > 0 ? 1 : 0;
                     taskSources += ((taskSourcesSum > 0 ? 1 : 0) - 1) / taskAmount;
                 }
             }
