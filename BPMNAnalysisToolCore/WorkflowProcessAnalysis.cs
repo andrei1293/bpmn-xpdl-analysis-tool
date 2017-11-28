@@ -161,12 +161,12 @@ namespace BPMNAnalysisToolCore
 
         class Messages
         {
-            public const string START_EVENTS = "Для процесса '{0}' не определено стартовое событие";
-            public const string END_EVENTS = "Для процесса '{0}' не определено конечное событие";
-            public const string INTERMEDIATE_EVENTS = "Промежуточное событие '{0}' исключено из потока процесса '{1}'";
-            public const string PROCESS_FLOW = "Для разделения потока процесса '{0}' на несколько маршрутов не используется шлюз";
-            public const string TARGET_TASKS = "Задача '{0}' не приводит к завершению процесса '{1}'";
-            public const string SOURCE_TASKS = "Задача '{0}' не связана с остальным процессом '{1}'";
+            public const string START_EVENTS = "Process '{0}' should has at least one start event";
+            public const string END_EVENTS = "Process '{0}' should has at least one end event";
+            public const string INTERMEDIATE_EVENTS = "Intermediate event '{0}' should not start or terminate the process '{1}'";
+            public const string PROCESS_FLOW = "Gateway should be used to define the process '{0}' flow";
+            public const string TARGET_TASKS = "Task '{0}' should continue to the end of the process '{1}'";
+            public const string SOURCE_TASKS = "Task '{0}' should not be disconnected from the rest of the process '{1}'";
         }
 
         private void CalculateCSC()
