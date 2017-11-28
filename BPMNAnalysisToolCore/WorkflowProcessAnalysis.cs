@@ -73,58 +73,6 @@ namespace BPMNAnalysisToolCore
             }
         }
 
-        public void SaveAsRDFTriplesSet(string xpdlDocument)
-        {
-            string bpmnBaseURI = "http://process-model.org/bpmn/";
-            string domainBaseURI = "http://process-model.org/domain/";
-
-            string fileName = xpdlDocument.Split('.')[0] + "_" + Name.Replace(' ', '_') + ".nt";
-
-            using (StreamWriter writer = new StreamWriter(fileName))
-            {
-                string subject = null;
-                string property = null;
-                string _object = null;
-
-                foreach (Activity activity in Activities)
-                {
-                    subject = "<" + domainBaseURI + Name.Replace(' ', '_') + ">";
-                    property = "<" + bpmnBaseURI + "Orchestration>";
-                    _object = "<" + domainBaseURI + activity.Name.Replace(' ', '_') + ">";
-
-                    if (activity.Name == null || activity.Name.Length == 0)
-                    {
-                        _object = "<" + domainBaseURI + activity.Type + ">";
-                    }
-
-                    writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
-                }
-
-                foreach (Transition transition in Transitions)
-                {
-                    Activity from = GetActivityById(transition.From);
-                    Activity to = GetActivityById(transition.To);
-
-                    subject = subject = "<" + domainBaseURI + from.Name.Replace(' ', '_') + ">";
-                    
-                    if (from.Name == null || from.Name.Length == 0) 
-                    {
-                        subject = "<" + domainBaseURI + from.Type + ">";
-                    }
-
-                    property = "<" + bpmnBaseURI + "Transition>";
-                    _object = "<" + domainBaseURI + to.Name.Replace(' ', '_') + ">";
-
-                    if (to.Name == null || to.Name.Length == 0)
-                    {
-                        _object = "<" + domainBaseURI + to.Type + ">";
-                    }
-
-                    writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
-                }
-            }
-        }
-
         public override string ToString()
         {
             return String.Format("Workflow Process Id = {0} Name = {1}", Id, Name);
@@ -174,11 +122,28 @@ namespace BPMNAnalysisToolCore
 
         public List<Issue> Issues { get; set; }
 
+        public int Tasks { get; set; }
+        public int Gateways { get; set; }
+        public int StartEvents { get; set; }
+        public int EndEvents { get; set; }
+        public int IntermediateEvents { get; set; }
         public double CSC { get; set; }
 
         public WorkflowProcessAnalysis()
         {
             Issues = new List<Issue>();
+        }
+
+        public string IssuesToString()
+        {
+            string result = "";
+
+            foreach (Issue issue in Issues)
+            {
+                result += issue.Message + ";";
+            }
+
+            return result;
         }
 
         public void CheckProcess()
@@ -314,6 +279,8 @@ namespace BPMNAnalysisToolCore
                 }
             }
 
+            this.StartEvents = startEventsAmount;
+
             if (startEventsAmount == 0)
             {
                 Issues.Add(new Issue()
@@ -341,6 +308,8 @@ namespace BPMNAnalysisToolCore
                 }
             }
 
+            this.EndEvents = endEventsAmount;
+
             if (endEventsAmount == 0)
             {
                 Issues.Add(new Issue()
@@ -360,10 +329,14 @@ namespace BPMNAnalysisToolCore
         {
             ProcessMatrix matrix = Process.Matrix;
 
+            this.IntermediateEvents = 0;
+
             foreach (Activity activity in Process.Activities)
             {
                 if (activity.Type.Equals(ActivityType.IntermediateEvent))
                 {
+                    this.IntermediateEvents++;
+
                     int index = Process.GetActivityIndexById(activity.Id);
 
                     int intermediateEventTargets = 0;
@@ -397,6 +370,16 @@ namespace BPMNAnalysisToolCore
         {
             ProcessMatrix matrix = Process.Matrix;
 
+            this.Gateways = 0;
+
+            foreach (Activity activity in Process.Activities)
+            {
+                if (activity.Type.Equals(ActivityType.Route))
+                {
+                    this.Gateways++;
+                }
+            }
+
             foreach (Activity activity in Process.Activities)
             {
                 if (activity.Type.Equals(ActivityType.Implementation))
@@ -426,10 +409,14 @@ namespace BPMNAnalysisToolCore
         {
             ProcessMatrix matrix = Process.Matrix;
 
+            this.Tasks = 0;
+
             foreach (Activity activity in Process.Activities)
             {
                 if (activity.Type.Equals(ActivityType.Implementation))
                 {
+                    this.Tasks++;
+
                     int index = Process.GetActivityIndexById(activity.Id);
 
                     int taskTargets = 0;
@@ -501,6 +488,64 @@ namespace BPMNAnalysisToolCore
         public string Document { get; set; }
 
         public List<WorkflowProcess> Processes { get; set; }
+
+        public void SaveAsRDFTriplesSet(string xpdlDocument)
+        {
+            string bpmnBaseURI = "http://process-model.org/bpmn/";
+            string domainBaseURI = "http://process-model.org/domain/";
+
+            string fileName = xpdlDocument.Split('.')[0] + ".nt";
+
+            using (StreamWriter writer = new StreamWriter(fileName))
+            {
+                foreach (WorkflowProcess process in Processes)
+                {
+                    if (process.Activities != null)
+                    {
+                        string subject = null;
+                        string property = null;
+                        string _object = null;
+
+                        foreach (Activity activity in process.Activities)
+                        {
+                            subject = "<" + domainBaseURI + process.Name.Replace(' ', '_') + ">";
+                            property = "<" + bpmnBaseURI + "Orchestration>";
+                            _object = "<" + domainBaseURI + activity.Name.Replace(' ', '_') + ">";
+
+                            if (activity.Name == null || activity.Name.Length == 0)
+                            {
+                                _object = "<" + domainBaseURI + activity.Type + ">";
+                            }
+
+                            writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
+                        }
+
+                        foreach (Transition transition in process.Transitions)
+                        {
+                            Activity from = process.GetActivityById(transition.From);
+                            Activity to = process.GetActivityById(transition.To);
+
+                            subject = subject = "<" + domainBaseURI + from.Name.Replace(' ', '_') + ">";
+
+                            if (from.Name == null || from.Name.Length == 0)
+                            {
+                                subject = "<" + domainBaseURI + from.Type + ">";
+                            }
+
+                            property = "<" + bpmnBaseURI + "Transition>";
+                            _object = "<" + domainBaseURI + to.Name.Replace(' ', '_') + ">";
+
+                            if (to.Name == null || to.Name.Length == 0)
+                            {
+                                _object = "<" + domainBaseURI + to.Type + ">";
+                            }
+
+                            writer.WriteLine(String.Format("{0} {1} {2} .", subject, property, _object));
+                        }
+                    }
+                }
+            }
+        }
 
         public void ReadDocument()
         {
