@@ -47,6 +47,15 @@ namespace XpdlToRdfTool
                     workflowProcesses.ReadDocument();
                     workflowProcesses.SaveAsRDFTriplesSet(xpdlDocument);
 
+                    int tasks = 0;
+                    int gateways = 0;
+                    int start = 0;
+                    int intermediate = 0;
+                    int end = 0;
+                    int issuesCount = 0;
+                    double csc = 0;
+                    string issues = "";
+
                     foreach (WorkflowProcess process in workflowProcesses.Processes)
                     {
                         if (process.Activities != null && process.Transitions != null)
@@ -55,17 +64,26 @@ namespace XpdlToRdfTool
                             analysis.Process = process;
                             analysis.CheckProcess();
 
-                            Console.WriteLine("{0};{1};{2};{3};{4};{5};{6};{7}",
-                                analysis.Tasks,
-                                analysis.Gateways,
-                                analysis.StartEvents,
-                                analysis.IntermediateEvents,
-                                analysis.EndEvents,
-                                analysis.Issues.Count,
-                                analysis.CSC,
-                                analysis.IssuesToString());
+                            tasks += analysis.Tasks;
+                            gateways += analysis.Gateways;
+                            start += analysis.StartEvents;
+                            intermediate += analysis.IntermediateEvents;
+                            end += analysis.EndEvents;
+                            csc += analysis.CSC;
+                            issuesCount += analysis.Issues.Count;
+                            issues += analysis.IssuesToString();
                         }
                     }
+
+                    Console.WriteLine("{0};{1};{2};{3};{4};{5};{6};{7}",
+                        tasks,
+                        gateways,
+                        start,
+                        intermediate,
+                        end,
+                        issuesCount,
+                        csc,
+                        issues);
                 }
             }
             catch (Exception e)
