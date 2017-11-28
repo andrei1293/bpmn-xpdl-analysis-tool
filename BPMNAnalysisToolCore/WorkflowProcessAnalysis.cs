@@ -140,7 +140,7 @@ namespace BPMNAnalysisToolCore
 
             foreach (Issue issue in Issues)
             {
-                result += issue.Message + ";";
+                result += issue.Message + "+";
             }
 
             return result;

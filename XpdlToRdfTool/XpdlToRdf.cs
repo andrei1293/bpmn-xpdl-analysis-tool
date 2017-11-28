@@ -55,7 +55,7 @@ namespace XpdlToRdfTool
                             analysis.Process = process;
                             analysis.CheckProcess();
 
-                            Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7}",
+                            Console.WriteLine("{0};{1};{2};{3};{4};{5};{6};{7}",
                                 analysis.Tasks,
                                 analysis.Gateways,
                                 analysis.StartEvents,
