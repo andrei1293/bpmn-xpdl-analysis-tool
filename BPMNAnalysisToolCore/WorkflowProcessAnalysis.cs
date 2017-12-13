@@ -494,7 +494,7 @@ namespace BPMNAnalysisToolCore
             string bpmnBaseURI = "http://process-model.org/bpmn/";
             string domainBaseURI = "http://process-model.org/domain/";
 
-            string fileName = xpdlDocument.Split('.')[0] + ".nt";
+            string fileName = xpdlDocument.Replace(".xpdl", ".nt");
 
             using (StreamWriter writer = new StreamWriter(fileName))
             {

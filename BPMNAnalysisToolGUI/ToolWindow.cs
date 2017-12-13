@@ -55,6 +55,7 @@ namespace BPMNAnalysisToolGUI
                 };
 
                 workflowProcesses.ReadDocument();
+                workflowProcesses.SaveAsRDFTriplesSet(filePath);
 
                 foreach (WorkflowProcess workflowProcess in workflowProcesses.Processes)
                 {
