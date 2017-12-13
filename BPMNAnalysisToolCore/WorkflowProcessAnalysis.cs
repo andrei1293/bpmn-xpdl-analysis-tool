@@ -169,6 +169,11 @@ namespace BPMNAnalysisToolCore
             public const string SOURCE_TASKS = "Задача '{0}' не связана с остальным процессом '{1}'";
         }
 
+        public double CalcIntegratedCSC()
+        {
+            return CSC;
+        }
+
         private void CalculateCSC()
         {
             double startEventsAmount = 0;

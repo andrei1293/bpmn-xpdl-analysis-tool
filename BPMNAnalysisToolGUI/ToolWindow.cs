@@ -22,9 +22,28 @@ namespace BPMNAnalysisToolGUI
             { "EndEvent", "Конечное событие" }
         };
 
+        private int Tasks = 0;
+        private int Gateways = 0;
+        private int Start = 0;
+        private int Intermediate = 0;
+        private int End = 0;
+        private int Shortcomings = 0;
+        private double Coefficient = 0;
+
         public ToolWindow()
         {
             InitializeComponent();
+        }
+
+        private void ClearMetrics()
+        {
+            Tasks = 0;
+            Gateways = 0;
+            Start = 0;
+            Intermediate = 0;
+            End = 0;
+            Shortcomings = 0;
+            Coefficient = 0;
         }
 
         private void DragEnterHandler(object sender, DragEventArgs e)
@@ -67,6 +86,14 @@ namespace BPMNAnalysisToolGUI
                         };
 
                         analysis.CheckProcess();
+
+                        Tasks += analysis.Tasks;
+                        Gateways += analysis.Gateways;
+                        Start += analysis.StartEvents;
+                        Intermediate += analysis.IntermediateEvents;
+                        End += analysis.EndEvents;
+                        Coefficient += analysis.CalcIntegratedCSC();
+                        Shortcomings += analysis.Issues.Count;
 
                         DataGridView resultGrid = new DataGridView();
 
@@ -114,6 +141,16 @@ namespace BPMNAnalysisToolGUI
                         processPage.Controls.Add(resultGrid);
                     }
                 }
+
+                tasksField.Text = Tasks.ToString();
+                gatewaysField.Text = Gateways.ToString();
+                startField.Text = Start.ToString();
+                intermediateField.Text = Intermediate.ToString();
+                endField.Text = End.ToString();
+                shortcomingsField.Text = Shortcomings.ToString();
+                coefficientField.Text = Math.Round(Coefficient, 4).ToString();
+
+                ClearMetrics();
             }
         }
     }
